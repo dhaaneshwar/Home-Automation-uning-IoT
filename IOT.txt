@@ -1,0 +1,139 @@
+
+
+#define BLYNK_PRINT Serial    
+#include <ESP8266WiFi.h>
+#include <BlynkSimpleEsp8266.h>
+
+#include <Wire.h> 
+#include <LCD_I2C.h>
+LCD_I2C lcd(0x27);
+
+// You should get Auth Token in the Blynk App.
+// Go to the Project Settings (nut icon).
+char auth[] = " kZgVx_hh7FtSyxjUpCJMklxLjWvrgBd0";
+
+
+
+
+#define pump D5
+#define light D6
+#define motor D7
+#define led D8
+
+// Your WiFi credentials.
+// Set password to "" for open networks.
+char ssid[] = "IOT";
+char pass[] = "123456789";
+String data = "";
+
+void setup()
+{
+  Serial.begin(9600);  
+  Blynk.begin(auth, ssid, pass);
+  Serial.print("0");
+
+  pinMode(pump,OUTPUT);
+  pinMode(light,OUTPUT);
+  pinMode(motor,OUTPUT);
+  pinMode(led,OUTPUT);
+
+  Wire.begin(); // gpio 2 and gpio 0 which are D4, and D3
+  lcd.begin();                 //Init the LCD
+  lcd.backlight();            //Activate backlight     
+  lcd.home();  
+  lcd.setCursor(0,0);
+  
+  lcd.print("    HOME");
+  
+  lcd.setCursor(0,1);
+  
+  lcd.print(" AUTOMATION");
+  delay(3000);
+  lcd.clear();
+}
+
+void loop()
+{
+ 
+  Blynk.run();
+}
+
+// fan
+BLYNK_WRITE(V0)
+{
+  int button = param.asInt(); // read button
+  if (button == 1) 
+  { 
+    Serial.print("1");
+    digitalWrite(pump,HIGH);
+    lcd.clear();
+    lcd.setCursor(0,0);
+    lcd.print("FAN ONED");
+  }  
+
+  else
+  {
+    Serial.print("2");
+    digitalWrite(pump,LOW);
+  }
+}
+
+// light
+BLYNK_WRITE(V1)
+{
+  int button = param.asInt(); // read button
+  if (button == 1) 
+  { 
+    Serial.print("3");   
+    digitalWrite(light,HIGH);
+    lcd.clear();
+    lcd.setCursor(0,0);
+    lcd.print("LIGHT 1 ONED");
+  }  
+
+  else
+  {
+    Serial.print("4");
+    digitalWrite(light,LOW);
+  }
+}
+
+// valve.........................................
+BLYNK_WRITE(V2)
+{
+  int button = param.asInt(); // read button
+  if (button == 1) 
+  { 
+    Serial.print("5");
+    digitalWrite(motor,HIGH);  
+    lcd.clear();
+    lcd.setCursor(0,0);
+    lcd.print("PUMP ONED");
+  }  
+
+  else
+  {
+    Serial.print("6");
+    digitalWrite(motor,LOW);
+  }
+}
+
+// ac lamp................................
+BLYNK_WRITE(V3)
+{
+  int button = param.asInt(); // read button
+  if (button == 1) 
+  { 
+    Serial.print("7");  
+    digitalWrite(led,HIGH);
+    lcd.clear();
+    lcd.setCursor(0,0);
+    lcd.print("LIGHT 2   ONED");
+  }  
+
+  else
+  {
+    Serial.print("8");
+    digitalWrite(led,LOW);
+  }
+}
